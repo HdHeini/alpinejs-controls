@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Alpine Modal with Focus Trap</title>
+    <!-- Focus plugin must be loaded before Alpine.js -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <style>
+      .modal-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+      }
+      .modal {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        max-width: 400px;
+        margin: 100px auto;
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div x-data="{ open: false }">
+      <button @click="open = true">Open Modal</button>
+      <template x-teleport="body">
+        <div x-show="open" x-transition class="modal-bg" x-trap.noscroll="open">
+          <div
+            class="modal"
+            @click.away="open = false"
+            @keydown.escape.window="open = false"
+          >
+            <button @click="open = false">OK</button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </body>
+</html>
