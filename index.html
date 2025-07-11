@@ -3,65 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accordion with Alpine.js (Single Open)</title>
+    <title>Tabs with Alpine.js</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
     <style>
-      .arrow {
-        transition: transform 0.2s ease;
-        display: inline-block;
-        margin-right: 8px;
+      .tab-button {
+        padding: 8px 16px;
+        cursor: pointer;
+        border: none;
+        background: #eee;
+        margin-right: 4px;
       }
-      .arrow.rotate {
-        transform: rotate(90deg);
+      .tab-button.active {
+        background: #ddd;
+        font-weight: bold;
+      }
+      .tab-content {
+        padding: 16px;
+        border: 1px solid #ccc;
+        margin-top: 8px;
       }
     </style>
   </head>
   <body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
-    <div
-      x-data="{
-      activeIndex: null,
-      items: [
-        { title: 'Section 1', content: 'Content of section 1' },
-        { title: 'Section 2', content: 'Content of section 2' },
-        { title: 'Section 3', content: 'Content of section 3' },
-      ]
-    }"
-    >
-      <template x-for="(item, index) in items" :key="index">
-        <div
-          style="
-            border: 1px solid #ccc;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-          "
+    <div x-data="{ activeTab: 'profile' }">
+      <div>
+        <button
+          class="tab-button"
+          :class="{ 'active': activeTab === 'profile' }"
+          @click="activeTab = 'profile'"
         >
-          <button
-            @click="activeIndex === index ? activeIndex = null : activeIndex = index"
-            style="
-              width: 100%;
-              text-align: left;
-              padding: 12px;
-              background: #f7f7f7;
-              border: none;
-              cursor: pointer;
-            "
-          >
-            <span :class="{'arrow': true, 'rotate': activeIndex === index}">▶</span>
-            <strong x-text="item.title"></strong>
-          </button>
-          <div
-            x-show="activeIndex === index"
-            x-transition
-            style="padding: 12px; background: #fff"
-          >
-            <p x-text="item.content"></p>
-          </div>
-        </div>
-      </template>
+          Profile
+        </button>
+        <button
+          class="tab-button"
+          :class="{ 'active': activeTab === 'settings' }"
+          @click="activeTab = 'settings'"
+        >
+          Settings
+        </button>
+        <button
+          class="tab-button"
+          :class="{ 'active': activeTab === 'security' }"
+          @click="activeTab = 'security'"
+        >
+          Security
+        </button>
+      </div>
+
+      <div class="tab-content" x-show="activeTab === 'profile'">
+        <p>This is the profile tab content.</p>
+      </div>
+
+      <div class="tab-content" x-show="activeTab === 'settings'">
+        <p>Here you can change your settings.</p>
+      </div>
+
+      <div class="tab-content" x-show="activeTab === 'security'">
+        <p>Security-related preferences go here.</p>
+      </div>
     </div>
   </body>
 </html>
