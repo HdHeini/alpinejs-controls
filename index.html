@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accordion with Alpine.js (Multi-Open)</title>
+    <title>Accordion with Alpine.js (Single Open)</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
@@ -12,7 +12,7 @@
       .arrow {
         transition: transform 0.2s ease;
         display: inline-block;
-        margin-left: 8px;
+        margin-right: 8px;
       }
       .arrow.rotate {
         transform: rotate(90deg);
@@ -21,11 +21,14 @@
   </head>
   <body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
     <div
-      x-data="{ items: [
-      { title: 'Section 1', content: 'Content of section 1', open: false },
-      { title: 'Section 2', content: 'Content of section 2', open: false },
-      { title: 'Section 3', content: 'Content of section 3', open: false },
-    ] }"
+      x-data="{
+      activeIndex: null,
+      items: [
+        { title: 'Section 1', content: 'Content of section 1' },
+        { title: 'Section 2', content: 'Content of section 2' },
+        { title: 'Section 3', content: 'Content of section 3' },
+      ]
+    }"
     >
       <template x-for="(item, index) in items" :key="index">
         <div
@@ -37,7 +40,7 @@
           "
         >
           <button
-            @click="item.open = !item.open"
+            @click="activeIndex === index ? activeIndex = null : activeIndex = index"
             style="
               width: 100%;
               text-align: left;
@@ -47,10 +50,14 @@
               cursor: pointer;
             "
           >
-            <span :class="{'arrow': true, 'rotate': item.open}">▶</span>
+            <span :class="{'arrow': true, 'rotate': activeIndex === index}">▶</span>
             <strong x-text="item.title"></strong>
           </button>
-          <div x-show="item.open" x-transition style="padding: 12px; background: #fff">
+          <div
+            x-show="activeIndex === index"
+            x-transition
+            style="padding: 12px; background: #fff"
+          >
             <p x-text="item.content"></p>
           </div>
         </div>
