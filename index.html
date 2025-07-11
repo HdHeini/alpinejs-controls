@@ -3,70 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dropdown with Alpine.js</title>
+    <title>Accordion with Alpine.js (Multi-Open)</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    <style>
+      .arrow {
+        transition: transform 0.2s ease;
+        display: inline-block;
+        margin-left: 8px;
+      }
+      .arrow.rotate {
+        transform: rotate(90deg);
+      }
+    </style>
   </head>
-  <body style="font-family: sans-serif; padding: 2rem">
+  <body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
     <div
-      x-data="{ open: false, tags: { docs: false, news: false, updates: false } }"
-      @keydown.escape.window="open = false"
-      style="position: relative"
+      x-data="{ items: [
+      { title: 'Section 1', content: 'Content of section 1', open: false },
+      { title: 'Section 2', content: 'Content of section 2', open: false },
+      { title: 'Section 3', content: 'Content of section 3', open: false },
+    ] }"
     >
-      <button @click="open = !open" type="button">Toggle Dropdown</button>
-
-      <div
-        x-show="open"
-        @click.outside="open = false"
-        x-transition.opacity.duration.150ms
-        style="
-          position: absolute;
-          top: 100%;
-          left: 0;
-          min-width: 220px;
-          background: white;
-          border: 1px solid #ccc;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-          z-index: 1000;
-          display: none;
-        "
-      >
-        <div style="padding: 8px 12px; font-weight: bold; border-bottom: 1px solid #eee">
-          Subscribe to:
-        </div>
-        <label style="display: block; padding: 8px 12px">
-          <input type="checkbox" x-model="tags.docs" /> Documentation
-        </label>
-        <label style="display: block; padding: 8px 12px">
-          <input type="checkbox" x-model="tags.news" /> News
-        </label>
-        <label style="display: block; padding: 8px 12px">
-          <input type="checkbox" x-model="tags.updates" /> Product Updates
-        </label>
-        <div style="padding: 8px 12px; border-top: 1px solid #eee">
+      <template x-for="(item, index) in items" :key="index">
+        <div
+          style="
+            border: 1px solid #ccc;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+          "
+        >
           <button
-            @click="open = false; alert('Subscribed to: ' + Object.keys(tags).filter(t => tags[t]).join(', '))"
-            style="padding: 6px 10px; cursor: pointer"
+            @click="item.open = !item.open"
+            style="
+              width: 100%;
+              text-align: left;
+              padding: 12px;
+              background: #f7f7f7;
+              border: none;
+              cursor: pointer;
+            "
           >
-            Confirm
+            <span :class="{'arrow': true, 'rotate': item.open}">▶</span>
+            <strong x-text="item.title"></strong>
           </button>
+          <div x-show="item.open" x-transition style="padding: 12px; background: #fff">
+            <p x-text="item.content"></p>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Dummy content to demonstrate overlap -->
-    <div>
-      <p>
-        This text comes directly after the button and demonstrates that the dropdown
-        appears on top of it.
-      </p>
-      <p style="max-width: 400px">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-        Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed,
-        dolor.
-      </p>
+      </template>
     </div>
   </body>
 </html>
