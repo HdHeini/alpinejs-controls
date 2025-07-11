@@ -2,46 +2,71 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Alpine Modal with Focus Trap</title>
-    <!-- Focus plugin must be loaded before Alpine.js -->
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"
-    ></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dropdown with Alpine.js</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
-    <style>
-      .modal-bg {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-      }
-      .modal {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        max-width: 400px;
-        margin: 100px auto;
-        position: relative;
-      }
-    </style>
   </head>
-  <body>
-    <div x-data="{ open: false }">
-      <button @click="open = true">Open Modal</button>
-      <template x-teleport="body">
-        <div x-show="open" x-transition class="modal-bg" x-trap.noscroll="open">
-          <div
-            class="modal"
-            @click.away="open = false"
-            @keydown.escape.window="open = false"
-          >
-            <button @click="open = false">OK</button>
-          </div>
+  <body style="font-family: sans-serif; padding: 2rem">
+    <div
+      x-data="{ open: false, tags: { docs: false, news: false, updates: false } }"
+      @keydown.escape.window="open = false"
+      style="position: relative"
+    >
+      <button @click="open = !open" type="button">Toggle Dropdown</button>
+
+      <div
+        x-show="open"
+        @click.outside="open = false"
+        x-transition.opacity.duration.150ms
+        style="
+          position: absolute;
+          top: 100%;
+          left: 0;
+          min-width: 220px;
+          background: white;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          display: none;
+        "
+      >
+        <div style="padding: 8px 12px; font-weight: bold; border-bottom: 1px solid #eee">
+          Subscribe to:
         </div>
-      </template>
+        <label style="display: block; padding: 8px 12px">
+          <input type="checkbox" x-model="tags.docs" /> Documentation
+        </label>
+        <label style="display: block; padding: 8px 12px">
+          <input type="checkbox" x-model="tags.news" /> News
+        </label>
+        <label style="display: block; padding: 8px 12px">
+          <input type="checkbox" x-model="tags.updates" /> Product Updates
+        </label>
+        <div style="padding: 8px 12px; border-top: 1px solid #eee">
+          <button
+            @click="open = false; alert('Subscribed to: ' + Object.keys(tags).filter(t => tags[t]).join(', '))"
+            style="padding: 6px 10px; cursor: pointer"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dummy content to demonstrate overlap -->
+    <div>
+      <p>
+        This text comes directly after the button and demonstrates that the dropdown
+        appears on top of it.
+      </p>
+      <p style="max-width: 400px">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
+        Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed,
+        dolor.
+      </p>
     </div>
   </body>
 </html>
