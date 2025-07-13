@@ -3,66 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tabs with Alpine.js</title>
+    <title>Combo Box with Alpine.js</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
     <style>
-      .tab-button {
-        padding: 8px 16px;
-        cursor: pointer;
-        border: none;
-        background: #eee;
-        margin-right: 4px;
-      }
-      .tab-button.active {
-        background: #ddd;
-        font-weight: bold;
-      }
-      .tab-content {
-        padding: 16px;
+      .dropdown {
+        position: absolute;
+        width: 100%;
+        top: 100%;
+        background: white;
         border: 1px solid #ccc;
-        margin-top: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .option {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .option:hover {
+        background-color: #f0f0f0;
       }
     </style>
   </head>
-  <body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
-    <div x-data="{ activeTab: 'profile' }">
-      <div>
-        <button
-          class="tab-button"
-          :class="{ 'active': activeTab === 'profile' }"
-          @click="activeTab = 'profile'"
-        >
-          Profile
-        </button>
-        <button
-          class="tab-button"
-          :class="{ 'active': activeTab === 'settings' }"
-          @click="activeTab = 'settings'"
-        >
-          Settings
-        </button>
-        <button
-          class="tab-button"
-          :class="{ 'active': activeTab === 'security' }"
-          @click="activeTab = 'security'"
-        >
-          Security
-        </button>
-      </div>
+  <body style="font-family: sans-serif; padding: 2rem; max-width: 400px; margin: auto">
+    <div
+      x-data="{
+      query: '',
+      selected: '',
+      items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'],
+      get filtered() {
+        return this.items.filter(i => i.toLowerCase().includes(this.query.toLowerCase()))
+      },
+      open: false
+    }"
+      style="position: relative"
+    >
+      <input
+        type="text"
+        x-model="query"
+        @focus="open = true"
+        @click.stop
+        @input="open = true"
+        @keydown.escape.window="open = false"
+        :value="selected"
+        placeholder="Select a fruit..."
+        style="width: 100%; padding: 8px; border: 1px solid #ccc"
+      />
 
-      <div class="tab-content" x-show="activeTab === 'profile'">
-        <p>This is the profile tab content.</p>
-      </div>
-
-      <div class="tab-content" x-show="activeTab === 'settings'">
-        <p>Here you can change your settings.</p>
-      </div>
-
-      <div class="tab-content" x-show="activeTab === 'security'">
-        <p>Security-related preferences go here.</p>
+      <div
+        class="dropdown"
+        x-show="open && filtered.length > 0"
+        @click.outside="open = false"
+      >
+        <template x-for="item in filtered" :key="item">
+          <div
+            class="option"
+            @click="selected = item; query = item; open = false"
+            x-text="item"
+          ></div>
+        </template>
       </div>
     </div>
   </body>
