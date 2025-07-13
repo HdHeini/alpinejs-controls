@@ -28,45 +28,124 @@
         background-color: #f0f0f0;
       }
     </style>
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("comboBox", (items = [], placeholder) => ({
+          placeholder,
+          query: "",
+          open: false,
+          selected: "",
+          items,
+          get filtered() {
+            return this.items.filter((i) =>
+              i.toLowerCase().includes(this.query.toLowerCase())
+            );
+          },
+          select(item) {
+            this.query = item;
+            this.open = false;
+          }
+        }));
+      });
+    </script>
   </head>
   <body style="font-family: sans-serif; padding: 2rem; max-width: 400px; margin: auto">
     <div
-      x-data="{
-      query: '',
-      selected: '',
-      items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'],
-      get filtered() {
-        return this.items.filter(i => i.toLowerCase().includes(this.query.toLowerCase()))
-      },
-      open: false
-    }"
-      style="position: relative"
+      x-data="{ fruit: '', color: '', hobby: '' }"
+      style="display: flex; flex-direction: column; gap: 8px"
     >
-      <input
-        type="text"
-        x-model="query"
-        @focus="open = true"
-        @click.stop
-        @input="open = true"
-        @keydown.escape.window="open = false"
-        :value="selected"
-        placeholder="Select a fruit..."
-        style="width: 100%; padding: 8px; border: 1px solid #ccc"
-      />
+      <input x-model="fruit" placeholder="Select a fruit..." />
+      <div
+        x-model="fruit"
+        x-data="comboBox(['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'])"
+        x-modelable="query"
+        style="position: relative"
+      >
+        <input
+          type="text"
+          x-model="query"
+          @focus="open = true"
+          @click.stop
+          @input="open = true"
+          @keydown.escape.window="open = false"
+          placeholder="Select a fruit..."
+          style="width: 100%; padding: 8px; border: 1px solid #ccc"
+        />
+
+        <div
+          class="dropdown"
+          x-show="open && filtered.length > 0"
+          @click.outside="open = false"
+        >
+          <template x-for="item in filtered" :key="item">
+            <div class="option" @click="select(item)" x-text="item"></div>
+          </template>
+        </div>
+      </div>
+
+      <input x-model="color" placeholder="Select a color..." />
+      <div
+        x-model="color"
+        x-data="comboBox(['Red', 'Blue', 'Purple', 'Green', 'Pink', 'Yellow', 'Brown', 'Orange', 'Black', 'White'])"
+        x-modelable="query"
+        style="position: relative"
+      >
+        <input
+          type="text"
+          x-model="query"
+          @focus="open = true"
+          @click.stop
+          @input="open = true"
+          @keydown.escape.window="open = false"
+          placeholder="Select a color..."
+          style="width: 100%; padding: 8px; border: 1px solid #ccc"
+        />
+
+        <div
+          class="dropdown"
+          x-show="open && filtered.length > 0"
+          @click.outside="open = false"
+        >
+          <template x-for="item in filtered" :key="item">
+            <div class="option" @click="select(item)" x-text="item"></div>
+          </template>
+        </div>
+      </div>
 
       <div
-        class="dropdown"
-        x-show="open && filtered.length > 0"
-        @click.outside="open = false"
+        x-model="hobby"
+        x-data="comboBox(['Fishing', 'Basketball', 'Soccer'], 'Please select a hobby...')"
+        x-modelable="query"
+        style="position: relative"
       >
-        <template x-for="item in filtered" :key="item">
-          <div
-            class="option"
-            @click="selected = item; query = item; open = false"
-            x-text="item"
-          ></div>
-        </template>
+        <input
+          type="text"
+          x-model="query"
+          @focus="open = true"
+          @click.stop
+          @input="open = true"
+          @keydown.escape.window="open = false"
+          :placeholder="placeholder"
+          style="width: 100%; padding: 8px; border: 1px solid #ccc"
+        />
+
+        <div
+          class="dropdown"
+          x-show="open && filtered.length > 0"
+          @click.outside="open = false"
+        >
+          <template x-for="item in filtered" :key="item">
+            <div class="option" @click="select(item)" x-text="item"></div>
+          </template>
+        </div>
       </div>
+
+      <button
+        style="margin-top: 2rem; padding: 8px 12px"
+        @click="alert('Fruit: ' + fruit + ', Color: ' + color + ', Hobby: ' + hobby)"
+      >
+        Submit
+      </button>
     </div>
   </body>
 </html>
