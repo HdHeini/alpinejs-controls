@@ -3,149 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Combo Box with Alpine.js</title>
+    <title>Toggle Switch with Alpine.js</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
-    <style>
-      .dropdown {
-        position: absolute;
-        width: 100%;
-        top: 100%;
-        background: white;
-        border: 1px solid #ccc;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        max-height: 200px;
-        overflow-y: auto;
-      }
-      .option {
-        padding: 8px 12px;
-        cursor: pointer;
-      }
-      .option:hover {
-        background-color: #f0f0f0;
-      }
-    </style>
-    <script>
-      document.addEventListener("alpine:init", () => {
-        Alpine.data("comboBox", (items = [], placeholder) => ({
-          placeholder,
-          query: "",
-          open: false,
-          selected: "",
-          items,
-          get filtered() {
-            return this.items.filter((i) =>
-              i.toLowerCase().includes(this.query.toLowerCase())
-            );
-          },
-          select(item) {
-            this.query = item;
-            this.open = false;
-          }
-        }));
-      });
-    </script>
   </head>
-  <body style="font-family: sans-serif; padding: 2rem; max-width: 400px; margin: auto">
-    <div
-      x-data="{ fruit: '', color: '', hobby: '' }"
-      style="display: flex; flex-direction: column; gap: 8px"
-    >
-      <input x-model="fruit" placeholder="Select a fruit..." />
-      <div
-        x-model="fruit"
-        x-data="comboBox(['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'])"
-        x-modelable="query"
-        style="position: relative"
-      >
-        <input
-          type="text"
-          x-model="query"
-          @focus="open = true"
-          @click.stop
-          @input="open = true"
-          @keydown.escape.window="open = false"
-          placeholder="Select a fruit..."
-          style="width: 100%; padding: 8px; border: 1px solid #ccc"
-        />
-
-        <div
-          class="dropdown"
-          x-show="open && filtered.length > 0"
-          @click.outside="open = false"
-        >
-          <template x-for="item in filtered" :key="item">
-            <div class="option" @click="select(item)" x-text="item"></div>
-          </template>
+  <body style="font-family: sans-serif; padding: 2rem">
+    <div x-data="{ isOn: false }">
+      <label style="display: flex; align-items: center; gap: 1rem; cursor: pointer">
+        <span>Enable notifications</span>
+        <div style="position: relative; display: inline-block; width: 44px; height: 24px">
+          <input type="checkbox" x-model="isOn" style="opacity: 0; width: 0; height: 0" />
+          <div
+            :style="'position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px; transition: 0.3s; background-color: ' + (isOn ? '#4ade80' : '#ccc')"
+          >
+            <div
+              :style="'position: absolute; top: 3px; left: ' + (isOn ? '23px' : '3px') + '; height: 18px; width: 18px; border-radius: 50%; background-color: white; transition: 0.3s;'"
+            ></div>
+          </div>
         </div>
-      </div>
-
-      <input x-model="color" placeholder="Select a color..." />
-      <div
-        x-model="color"
-        x-data="comboBox(['Red', 'Blue', 'Purple', 'Green', 'Pink', 'Yellow', 'Brown', 'Orange', 'Black', 'White'])"
-        x-modelable="query"
-        style="position: relative"
-      >
-        <input
-          type="text"
-          x-model="query"
-          @focus="open = true"
-          @click.stop
-          @input="open = true"
-          @keydown.escape.window="open = false"
-          placeholder="Select a color..."
-          style="width: 100%; padding: 8px; border: 1px solid #ccc"
-        />
-
-        <div
-          class="dropdown"
-          x-show="open && filtered.length > 0"
-          @click.outside="open = false"
-        >
-          <template x-for="item in filtered" :key="item">
-            <div class="option" @click="select(item)" x-text="item"></div>
-          </template>
-        </div>
-      </div>
-
-      <div
-        x-model="hobby"
-        x-data="comboBox(['Fishing', 'Basketball', 'Soccer'], 'Please select a hobby...')"
-        x-modelable="query"
-        style="position: relative"
-      >
-        <input
-          type="text"
-          x-model="query"
-          @focus="open = true"
-          @click.stop
-          @input="open = true"
-          @keydown.escape.window="open = false"
-          :placeholder="placeholder"
-          style="width: 100%; padding: 8px; border: 1px solid #ccc"
-        />
-
-        <div
-          class="dropdown"
-          x-show="open && filtered.length > 0"
-          @click.outside="open = false"
-        >
-          <template x-for="item in filtered" :key="item">
-            <div class="option" @click="select(item)" x-text="item"></div>
-          </template>
-        </div>
-      </div>
-
-      <button
-        style="margin-top: 2rem; padding: 8px 12px"
-        @click="alert('Fruit: ' + fruit + ', Color: ' + color + ', Hobby: ' + hobby)"
-      >
-        Submit
-      </button>
+      </label>
+      <p style="margin-top: 1rem">
+        Toggle is <strong x-text="isOn ? 'ON' : 'OFF'"></strong>
+      </p>
     </div>
   </body>
 </html>

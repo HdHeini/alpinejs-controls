@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toggle Switch with Alpine.js</title>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("toggleSwitch", (initial = false, labelText) => ({
+          value: initial,
+          labelText
+        }));
+      });
+    </script>
+    <style>
+      .switch-container {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+      .switch-input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .switch-track {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 24px;
+        transition: 0.3s;
+        background-color: #ccc;
+      }
+      .switch-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background-color: white;
+        transition: 0.3s;
+      }
+      .switch-on .switch-track {
+        background-color: #4ade80;
+      }
+      .switch-on .switch-thumb {
+        left: 23px;
+      }
+    </style>
+  </head>
+  <body style="font-family: sans-serif; padding: 2rem">
+    <div x-data="{ notificationsOn: false, darkMode: true, admin: false }">
+      <!-- First Toggle -->
+      <div x-data="toggleSwitch()" x-modelable="value" x-model="notificationsOn">
+        <label style="display: flex; align-items: center; gap: 1rem; cursor: pointer">
+          <span>Enable notifications</span>
+          <div :class="{ 'switch-container': true, 'switch-on': value }">
+            <input type="checkbox" x-model="value" class="switch-input" />
+            <div class="switch-track">
+              <div class="switch-thumb"></div>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <p style="margin-top: 1rem">
+        Notifications are <strong x-text="notificationsOn ? 'ON' : 'OFF'"></strong>
+      </p>
+
+      <!-- Second Toggle -->
+      <div
+        x-data="toggleSwitch()"
+        x-modelable="value"
+        x-model="darkMode"
+        style="margin-top: 2rem"
+      >
+        <label style="display: flex; align-items: center; gap: 1rem; cursor: pointer">
+          <span>Enable dark mode</span>
+          <div :class="{ 'switch-container': true, 'switch-on': value }">
+            <input type="checkbox" x-model="value" class="switch-input" />
+            <div class="switch-track">
+              <div class="switch-thumb"></div>
+            </div>
+          </div>
+        </label>
+      </div>
+      <p style="margin-top: 1rem">
+        Dark mode is <strong x-text="darkMode ? 'ON' : 'OFF'"></strong>
+      </p>
+
+      <div
+        x-data="toggleSwitch(false, 'Enable admin mode')"
+        x-modelable="value"
+        x-model="admin"
+        style="margin-top: 2rem"
+      >
+        <label style="display: flex; align-items: center; gap: 1rem; cursor: pointer">
+          <span x-text="labelText"></span>
+          <div :class="{ 'switch-container': true, 'switch-on': value }">
+            <input type="checkbox" x-model="value" class="switch-input" />
+            <div class="switch-track">
+              <div class="switch-thumb"></div>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <p style="margin-top: 1rem">
+        Admin mode is <strong x-text="admin ? 'ON' : 'OFF'"></strong>
+      </p>
+    </div>
+  </body>
+</html>
