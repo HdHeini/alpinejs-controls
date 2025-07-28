@@ -3,66 +3,80 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alpine.js Tooltip Demo</title>
+    <title>Star Rating with Alpine.js</title>
     <script
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
       defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
     <style>
-      .tooltip {
-        background: black;
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 3px;
-        white-space: nowrap;
-        font-size: 0.875rem;
-        z-index: 1000;
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+        background: #f9f9f9;
       }
-
-      [x-cloak] {
-        display: none !important;
+      .star-button {
+        font-size: 2rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .highlight {
+        color: #facc15;
+      }
+      .dimmed {
+        color: #d1d5db;
+      }
+      .gap {
+        display: flex;
+        gap: 0.5rem;
       }
     </style>
   </head>
   <body>
-    <div data-tooltip="I'm a tooltip from attribute">Hover me</div>
-    <div data-tooltip="Another tooltip here">Hover me too</div>
-    <article data-tooltip="This is an article tooltip">Hover over this article</article>
+    <h1>Star Rating Example</h1>
 
-    <div
-      x-data="{
-      show: false,
-      text: '',
-      x: 0,
-      y: 0,
-      timeout: null,
-      init() {
-        document.querySelectorAll('[data-tooltip]').forEach(el => {
-          el.addEventListener('mouseenter', () => {
-            this.timeout = setTimeout(() => {
-              const rect = el.getBoundingClientRect();
-              this.text = el.getAttribute('data-tooltip');
-              this.x = rect.left + window.scrollX;
-              this.y = rect.top + window.scrollY + el.offsetHeight;
-              this.show = true;
-            }, 300); // Delay in ms
-          });
-          el.addEventListener('mouseleave', () => {
-            clearTimeout(this.timeout);
-            this.show = false;
-          });
-        });
-      }
-    }"
-      x-cloak
-    >
-      <template x-if="show">
-        <template x-teleport="body">
-          <div class="tooltip" :style="`position: fixed; top: ${y}px; left: ${x}px;`">
-            <span x-text="text"></span>
-          </div>
+    <div x-data="{ rating: 3, rating2: 4 }">
+      <div x-data="starRating({  })" x-modelable="value" x-model="rating" class="gap">
+        <template x-for="i in max" :key="i">
+          <button
+            type="button"
+            @click="value = i"
+            @mouseenter="hover = i"
+            @mouseleave="hover = null"
+            :class="i <= (hover ?? value) ? 'highlight' : 'dimmed'"
+            class="star-button"
+          >
+            &#9733;
+          </button>
         </template>
-      </template>
+      </div>
+
+      <div x-data="starRating({})" x-modelable="value" x-model="rating2" class="gap">
+        <template x-for="i in max" :key="i">
+          <button
+            type="button"
+            @click="value = i"
+            @mouseenter="hover = i"
+            @mouseleave="hover = null"
+            :class="i <= (hover ?? value) ? 'highlight' : 'dimmed'"
+            class="star-button"
+          >
+            &#9733;
+          </button>
+        </template>
+      </div>
+      <p style="margin-top: 1rem">Current rating: <span x-text="rating"></span> stars</p>
+      <p style="margin-top: 1rem">Current rating: <span x-text="rating2"></span> stars</p>
     </div>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("starRating", ({ max = 5 }) => ({
+          max,
+          value: 0,
+          hover: null
+        }));
+      });
+    </script>
   </body>
 </html>
