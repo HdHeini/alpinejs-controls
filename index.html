@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Star Rating with Alpine.js</title>
+    <title>Enhanced Range Slider with Alpine.js</title>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
@@ -14,68 +14,141 @@
         padding: 2rem;
         background: #f9f9f9;
       }
-      .star-button {
-        font-size: 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-      }
-      .highlight {
-        color: #facc15;
-      }
-      .dimmed {
-        color: #d1d5db;
-      }
-      .gap {
+      .range-wrapper {
         display: flex;
-        gap: 0.5rem;
+        align-items: center;
+        gap: 1rem;
+      }
+      .range-container {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+      }
+      input[type="range"] {
+        width: 100%;
+        appearance: none;
+        height: 6px;
+        background: transparent;
+        outline: none;
+        z-index: 2;
+        position: relative;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        height: 16px;
+        width: 16px;
+        background: black;
+        border-radius: 50%;
+        cursor: pointer;
+        margin-top: -5px; /* vertical centering */
+        position: relative;
+        z-index: 3;
+      }
+      input[type="range"]::-moz-range-thumb {
+        height: 16px;
+        width: 16px;
+        background: black;
+        border-radius: 50%;
+        cursor: pointer;
+        position: relative;
+        z-index: 3;
+      }
+      .range-bg {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        height: 6px;
+        background: darkgray;
+        border-radius: 3px;
+        z-index: 1;
+      }
+      .range-fill {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 6px;
+        background-color: #4caf50;
+        border-radius: 3px;
+        z-index: 2;
+      }
+      .range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        max-width: 300px;
+      }
+      .value-display {
+        font-weight: bold;
+        min-width: 2rem;
+        text-align: right;
       }
     </style>
   </head>
   <body>
-    <h1>Star Rating Example</h1>
+    <h1>Enhanced Range Slider Example</h1>
 
-    <div x-data="{ rating: 3, rating2: 4 }">
-      <div x-data="starRating({  })" x-modelable="value" x-model="rating" class="gap">
-        <template x-for="i in max" :key="i">
-          <button
-            type="button"
-            @click="value = i"
-            @mouseenter="hover = i"
-            @mouseleave="hover = null"
-            :class="i <= (hover ?? value) ? 'highlight' : 'dimmed'"
-            class="star-button"
-          >
-            &#9733;
-          </button>
-        </template>
+    <div x-data="{ valueOuter: 50, valueOuter2: 10 }">
+      <div
+        x-data="rangeSlider({ min: -100, max: 100, step: 10, showLabels: true, 
+          showValue: true, readonly: false, highlightColor: 'red' })"
+        x-modelable="value"
+        x-model="valueOuter"
+      >
+        <div class="range-wrapper">
+          <div class="range-container">
+            <div class="range-bg"></div>
+            <div
+              class="range-fill"
+              :style="{ width: ((value - min) / (max - min) * 100) + '%', backgroundColor: highlightColor }"
+            ></div>
+            <input
+              type="range"
+              :min="min"
+              :max="max"
+              :step="step"
+              x-model="value"
+              :disabled="readonly"
+            />
+          </div>
+          <span class="value-display" x-show="showValue" x-text="value"></span>
+        </div>
+
+        <div class="range-labels" x-show="showLabels">
+          <span x-text="min"></span>
+          <span x-text="max"></span>
+        </div>
       </div>
 
-      <div x-data="starRating({})" x-modelable="value" x-model="rating2" class="gap">
-        <template x-for="i in max" :key="i">
-          <button
-            type="button"
-            @click="value = i"
-            @mouseenter="hover = i"
-            @mouseleave="hover = null"
-            :class="i <= (hover ?? value) ? 'highlight' : 'dimmed'"
-            class="star-button"
-          >
-            &#9733;
-          </button>
-        </template>
-      </div>
-      <p style="margin-top: 1rem">Current rating: <span x-text="rating"></span> stars</p>
-      <p style="margin-top: 1rem">Current rating: <span x-text="rating2"></span> stars</p>
+      <p style="margin-top: 1rem">
+        Current value (external): <span x-text="valueOuter"></span>
+      </p>
     </div>
 
     <script>
       document.addEventListener("alpine:init", () => {
-        Alpine.data("starRating", ({ max = 5 }) => ({
-          max,
-          value: 0,
-          hover: null
-        }));
+        Alpine.data(
+          "rangeSlider",
+          ({
+            min = 0,
+            max = 100,
+            step = 1,
+            showLabels = true,
+            showValue = true,
+            readonly = false,
+            highlightColor = "#4caf50"
+          }) => ({
+            min,
+            max,
+            step,
+            value: 0,
+            showLabels,
+            showValue,
+            readonly,
+            highlightColor
+          })
+        );
       });
     </script>
   </body>
